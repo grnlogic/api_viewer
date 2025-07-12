@@ -10,16 +10,23 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Cpu, HardDrive, MemoryStick, Wifi } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { useState, useEffect } from "react";
-import ApexCharts from "react-apexcharts";
+import dynamic from "next/dynamic";
+
+// Dynamic import untuk ApexCharts
+const ApexCharts = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+  loading: () => <div className="h-[200px] bg-muted animate-pulse rounded" />,
+});
+
+// Dynamic import untuk Recharts components
+const RechartsComponents = dynamic(
+  () =>
+    import("./recharts-wrapper").then((mod) => ({
+      default: mod.RechartsComponents,
+    })),
+  { ssr: false }
+);
 
 interface SystemHealth {
   cpu: number;
@@ -58,12 +65,35 @@ interface SystemHealthCardProps {
 }
 
 export function SystemHealthCard({ systemHealth }: SystemHealthCardProps) {
+  const [isClient, setIsClient] = useState(false);
   const [cpuHistory, setCpuHistory] = useState<{ time: string; cpu: number }[]>(
     []
   );
   const [cpuCandles, setCpuCandles] = useState<{ x: string; y: number[] }[]>(
     []
   );
+
+  // Set isClient to true after component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Saat komponen mount, ambil dari localStorage
+  useEffect(() => {
+    if (isClient && typeof window !== "undefined") {
+      const saved = localStorage.getItem("cpuHistory");
+      if (saved) {
+        setCpuHistory(JSON.parse(saved));
+      }
+    }
+  }, [isClient]);
+
+  // Saat cpuHistory berubah, simpan ke localStorage
+  useEffect(() => {
+    if (isClient && typeof window !== "undefined") {
+      localStorage.setItem("cpuHistory", JSON.stringify(cpuHistory));
+    }
+  }, [cpuHistory, isClient]);
 
   useEffect(() => {
     if (systemHealth?.cpu !== undefined) {
@@ -210,35 +240,15 @@ export function SystemHealthCard({ systemHealth }: SystemHealthCardProps) {
         </div>
 
         {/* CPU Usage Line Chart */}
-        {cpuHistory.length > 1 && (
+        {isClient && cpuHistory.length > 1 && (
           <div className="mt-6">
             <h4 className="font-medium mb-2">CPU Usage History</h4>
-            <ResponsiveContainer width="100%" height={120}>
-              <LineChart data={cpuHistory}>
-                <XAxis dataKey="time" hide />
-                <YAxis
-                  domain={[0, 30]}
-                  tickFormatter={(v) => `${v}%`}
-                  width={30}
-                />
-                <Tooltip
-                  formatter={(v) =>
-                    typeof v === "number" ? v.toFixed(2) + "%" : v
-                  }
-                />
-                <Line
-                  type="monotone"
-                  dataKey="cpu"
-                  stroke="#8884d8"
-                  dot={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            <RechartsComponents data={cpuHistory} />
           </div>
         )}
 
         {/* CPU Usage Candlestick Chart */}
-        {cpuCandles.length > 0 && (
+        {isClient && cpuCandles.length > 0 && (
           <div className="mt-6">
             <h4 className="font-medium mb-2">CPU Usage Candlestick</h4>
             <ApexCharts
