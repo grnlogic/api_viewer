@@ -16,29 +16,7 @@ interface Alert {
 }
 
 export function AlertNotifications() {
-  const [alerts, setAlerts] = useState<Alert[]>([
-    {
-      id: "1",
-      type: "warning",
-      title: "Database Performance Degraded",
-      message: "Response times are 20% higher than normal. Investigating...",
-      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "2",
-      type: "error",
-      title: "File Storage Service Down",
-      message: "File upload and download services are currently unavailable.",
-      timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "3",
-      type: "success",
-      title: "API Gateway Restored",
-      message: "All API endpoints are now responding normally.",
-      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-    },
-  ]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
 
   const dismissAlert = (id: string) => {
     setAlerts((prev) =>

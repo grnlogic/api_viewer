@@ -116,3 +116,94 @@
   background-size: 200px 100%;
   animation: shimmer 1.5s infinite;
 }
+
+/* Error page specific styles */
+.error-gradient {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--background)) 0%,
+    hsl(var(--muted) / 0.2) 100%
+  );
+}
+
+.error-card-shadow {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Logo animation */
+.logo-animate {
+  transition: transform 0.3s ease-in-out;
+}
+
+.logo-animate:hover {
+  transform: scale(1.05);
+}
+
+/* Error type specific colors */
+.error-connection {
+  @apply text-red-600 bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800;
+}
+
+.error-server {
+  @apply text-orange-600 bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800;
+}
+
+.error-network {
+  @apply text-blue-600 bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800;
+}
+
+.error-maintenance {
+  @apply text-yellow-600 bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800;
+}
+
+/* Animation for error pages */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Error icon animation */
+@keyframes errorShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.animate-error-shake {
+  animation: errorShake 0.5s ease-in-out;
+}
+
+/* Failed to fetch animation */
+@keyframes failedFetch {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-failed-fetch {
+  animation: failedFetch 2s ease-in-out infinite;
+}

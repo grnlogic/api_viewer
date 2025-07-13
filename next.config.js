@@ -6,7 +6,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  serverExternalPackages: [],
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
   images: {
     domains: ["localhost", "45.158.126.252"],
     remotePatterns: [

@@ -18,7 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -32,10 +32,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusOverviewCards } from "@/components/status-overview-cards";
 import { SystemHealthCard } from "@/components/system-health-card";
+import { RemoteHealthMonitor } from "@/components/remote-health-monitor";
 import { AlertNotifications } from "@/components/alert-notifications";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiCall, API_ENDPOINTS } from "@/lib/api";
+import { ErrorPage } from "@/components/error-page";
+import { LoadingPage } from "@/components/loading-page";
+import Dither from "@/components/dither-background";
 
 interface Service {
   id: string;
@@ -47,6 +51,10 @@ interface Service {
   lastIncident: string | null;
   statusHistory: Array<{
     date: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
     status: "operational" | "degraded" | "outage";
   }>;
 }
@@ -195,15 +203,13 @@ export function ServiceStatusDashboard() {
 
       // Mapping status dari backend ke frontend
       const mapStatus = (status: string) => {
-        switch (status) {
+        switch (status?.toUpperCase()) {
           case "UP":
             return "operational";
-          case "DOWN":
-            return "outage";
           case "DEGRADED":
             return "degraded";
           default:
-            return "unknown";
+            return "outage";
         }
       };
 
@@ -404,7 +410,8 @@ export function ServiceStatusDashboard() {
     };
 
     eventSource.onerror = (error) => {
-      console.error("SSE connection error:", error);
+      // Silent error handling for SSE connection issues
+      // console.error("SSE connection error:", error);
     };
 
     return () => {
@@ -441,61 +448,59 @@ export function ServiceStatusDashboard() {
 
   if (loading) {
     return (
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="text-center space-y-4">
-          <Skeleton className="h-8 w-64 mx-auto" />
-          <Skeleton className="h-4 w-48 mx-auto" />
-        </div>
-
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-32" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+      <LoadingPage message="Memuat data dashboard..." showProgress={true} />
     );
   }
 
   if (error) {
+    // Determine error type based on error message
+    let errorType: "connection" | "server" | "network" | "maintenance" =
+      "connection";
+
+    if (error.includes("Failed to fetch") || error.includes("network")) {
+      errorType = "network";
+    } else if (error.includes("maintenance")) {
+      errorType = "maintenance";
+    } else if (error.includes("server") || error.includes("500")) {
+      errorType = "server";
+    }
+
     return (
-      <div className="container mx-auto p-6">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {error.includes("Failed to fetch")
-              ? "Backend sedang maintenance atau tidak dapat dijangkau. Silakan coba beberapa saat lagi."
-              : `Failed to load dashboard data: ${error}`}
-            <Button
-              variant="outline"
-              size="sm"
-              className="ml-4 bg-transparent"
-              onClick={fetchData}
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <ErrorPage
+        error={error}
+        errorType={errorType}
+        onRetry={fetchData}
+        showBackToHome={false}
+      />
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <div className="container mx-auto p-6 space-y-6">
+    <div className="min-h-screen relative">
+      {/* Dither Background */}
+      <div className="absolute inset-0 z-0">
+        <Dither
+          waveColor={[0.1, 0.1, 0.2]}
+          disableAnimation={false}
+          enableMouseInteraction={true}
+          mouseRadius={0.07}
+          colorNum={4}
+          waveAmplitude={0.3}
+          waveFrequency={3}
+          waveSpeed={0.05}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto p-6 space-y-6">
         {/* Enhanced Header */}
         <div className="flex flex-col space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-2">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-white drop-shadow-lg">
                 Service Status Monitor
               </h1>
-              <p className="text-muted-foreground">
+              <p className="text-white/80 drop-shadow-sm">
                 Real-time monitoring dashboard for all services
               </p>
             </div>
@@ -517,13 +522,13 @@ export function ServiceStatusDashboard() {
           </div>
 
           {/* Status Overview */}
-          <div className="flex items-center justify-center gap-4 p-6 bg-card rounded-lg border">
+          <div className="flex items-center justify-center gap-4 p-6 bg-card/80 backdrop-blur-sm rounded-lg border">
             <div
               className={`w-4 h-4 rounded-full ${getStatusColor(
                 overallStatus
               )} animate-pulse`}
             />
-            <span className="text-2xl font-semibold">
+            <span className="text-2xl font-semibold text-white drop-shadow-lg">
               {getStatusText(overallStatus)}
             </span>
             <Badge className="ml-2">
@@ -541,8 +546,11 @@ export function ServiceStatusDashboard() {
         {/* System Health */}
         {systemHealth && <SystemHealthCard systemHealth={systemHealth} />}
 
+        {/* Remote Backend Health */}
+        <RemoteHealthMonitor />
+
         {/* Services Section */}
-        <Card>
+        <Card className="bg-card/80 backdrop-blur-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
