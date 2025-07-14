@@ -7,31 +7,41 @@ export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  error: any;
   reset: () => void;
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error("Global error:", error);
+    if (error) {
+      console.error("Global error:", error);
+    }
   }, [error]);
 
   // Determine error type based on error message
   let errorType: "connection" | "server" | "network" | "maintenance" = "server";
+  const errorMessage =
+    (error &&
+      typeof error === "object" &&
+      "message" in error &&
+      error.message) ||
+    (typeof error === "string"
+      ? error
+      : "Terjadi kesalahan yang tidak diketahui.");
 
   if (
-    error.message.includes("Failed to fetch") ||
-    error.message.includes("network")
+    errorMessage.includes("Failed to fetch") ||
+    errorMessage.includes("network")
   ) {
     errorType = "network";
-  } else if (error.message.includes("maintenance")) {
+  } else if (errorMessage.includes("maintenance")) {
     errorType = "maintenance";
-  } else if (error.message.includes("connection")) {
+  } else if (errorMessage.includes("connection")) {
     errorType = "connection";
   }
 
   return (
     <ErrorPage
-      error={error.message}
+      error={errorMessage}
       errorType={errorType}
       onRetry={reset}
       showBackToHome={true}

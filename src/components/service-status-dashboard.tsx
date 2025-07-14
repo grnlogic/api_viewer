@@ -39,14 +39,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiCall, API_ENDPOINTS } from "@/lib/api";
 import { ErrorPage } from "@/components/error-page";
 import { LoadingPage } from "@/components/loading-page";
-import dynamic from "next/dynamic";
-
-const Dither = dynamic(() => import("@/components/dither-background"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-purple-900" />
-  ),
-});
 
 interface Service {
   id: string;
@@ -484,20 +476,6 @@ export function ServiceStatusDashboard() {
 
   return (
     <div className="min-h-screen relative">
-      {/* Dither Background */}
-      <div className="absolute inset-0 z-0">
-        <Dither
-          waveColor={[0.1, 0.1, 0.2]}
-          disableAnimation={false}
-          enableMouseInteraction={true}
-          mouseRadius={0.07}
-          colorNum={4}
-          waveAmplitude={0.3}
-          waveFrequency={3}
-          waveSpeed={0.05}
-        />
-      </div>
-
       {/* Content */}
       <div className="relative z-10 container mx-auto p-6 space-y-6">
         {/* Enhanced Header */}
