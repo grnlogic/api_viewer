@@ -39,7 +39,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiCall, API_ENDPOINTS } from "@/lib/api";
 import { ErrorPage } from "@/components/error-page";
 import { LoadingPage } from "@/components/loading-page";
-import Dither from "@/components/dither-background";
+import dynamic from "next/dynamic";
+
+const Dither = dynamic(() => import("@/components/dither-background"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-purple-900" />
+  ),
+});
 
 interface Service {
   id: string;
