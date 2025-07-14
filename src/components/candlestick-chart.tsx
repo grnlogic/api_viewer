@@ -15,7 +15,7 @@ interface CandlestickData {
 interface CandlestickChartProps {
   data: CandlestickData[]
 }
-
+//test
 export function CandlestickChart({ data }: CandlestickChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
