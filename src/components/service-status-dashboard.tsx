@@ -142,9 +142,7 @@ export function ServiceStatusDashboard() {
       let diskInfo = null;
       if (healthData.disks && healthData.disks.length > 0) {
         diskTotal = healthData.disks[0].size / 1024 / 1024 / 1024; // GB
-        // Jika ada info used, gunakan, jika tidak, tampilkan reads/writes saja
-        // Misal, gunakan dummy 8.32 GB used (harusnya dari backend)
-        diskUsed = 8.32; // <-- Ganti dengan data asli jika ada
+        diskUsed = healthData.disks[0].used / 1024 / 1024 / 1024; // GB
         disk = (diskUsed / diskTotal) * 100;
         diskInfo = healthData.disks.map((d: any) => ({
           size: typeof d.size === "number" ? d.size : parseInt(d.size, 10) || 0,
@@ -314,7 +312,7 @@ export function ServiceStatusDashboard() {
       let diskInfo = null;
       if (healthData.disks && healthData.disks.length > 0) {
         diskTotal = healthData.disks[0].size / 1024 / 1024 / 1024; // GB
-        diskUsed = 8.32; // Dummy, ganti jika ada data asli
+        diskUsed = healthData.disks[0].used / 1024 / 1024 / 1024; // GB
         disk = (diskUsed / diskTotal) * 100;
         diskInfo = healthData.disks.map((d: any) => ({
           size: typeof d.size === "number" ? d.size : parseInt(d.size, 10) || 0,
