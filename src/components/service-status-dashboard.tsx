@@ -430,16 +430,26 @@ export function ServiceStatusDashboard() {
     }
   };
 
+  // Fungsi untuk fallback status summary jika overallStatus tidak valid
+  const getMajorityStatus = () => {
+    if (services.length === 0) return "operational";
+    const count = { operational: 0, degraded: 0, outage: 0 };
+    services.forEach((s) => count[s.status]++);
+    if (count.outage > 0) return "outage";
+    if (count.degraded > 0) return "degraded";
+    return "operational";
+  };
+
   const getStatusText = (status: string) => {
     switch (status) {
       case "operational":
-        return "All Systems Operational";
+        return "Semua Sistem Berjalan";
       case "degraded":
-        return "Some Systems Degraded";
+        return "Sebagian Sistem Bermasalah";
       case "outage":
-        return "System Outage";
+        return "Gangguan Sistem";
       default:
-        return "Unknown Status";
+        return "Semua Sistem Berjalan";
     }
   };
 
@@ -508,11 +518,17 @@ export function ServiceStatusDashboard() {
           <div className="flex items-center justify-center gap-4 p-6 bg-card/80 backdrop-blur-sm rounded-lg border">
             <div
               className={`w-4 h-4 rounded-full ${getStatusColor(
-                overallStatus
+                ["operational", "degraded", "outage"].includes(overallStatus)
+                  ? overallStatus
+                  : getMajorityStatus()
               )} animate-pulse`}
             />
             <span className="text-2xl font-semibold text-white drop-shadow-lg">
-              {getStatusText(overallStatus)}
+              {getStatusText(
+                ["operational", "degraded", "outage"].includes(overallStatus)
+                  ? overallStatus
+                  : getMajorityStatus()
+              )}
             </span>
             <Badge className="ml-2">
               Last updated: {new Date().toLocaleTimeString()}

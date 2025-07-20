@@ -79,6 +79,49 @@ export function ServiceStatusItem({
     });
   };
 
+  // Rekap statusHistory per hari, isi status setiap hari dengan status terakhir yang berlaku
+  const getDailyStatusHistory = (
+    statusHistory: typeof service.statusHistory
+  ): { date: string; status: "operational" | "degraded" | "outage" }[] => {
+    if (!statusHistory || statusHistory.length === 0) return [];
+    // Urutkan statusHistory dari paling lama ke paling baru
+    const sorted = [...statusHistory].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    // Tentukan rentang tanggal dari tanggal terawal hingga hari ini
+    const startDate = new Date(sorted[0].date);
+    const endDate = new Date();
+    endDate.setHours(0, 0, 0, 0); // hari ini, jam 00:00
+    const days: {
+      date: string;
+      status: "operational" | "degraded" | "outage";
+    }[] = [];
+    let currentStatus: "operational" | "degraded" | "outage" = sorted[0].status;
+    let idx = 0;
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
+    ) {
+      // Jika ada perubahan status di hari ini, update currentStatus
+      while (
+        idx < sorted.length &&
+        new Date(sorted[idx].date).setHours(0, 0, 0, 0) === d.getTime()
+      ) {
+        currentStatus = sorted[idx].status;
+        idx++;
+      }
+      const dayStr =
+        d.getFullYear() +
+        "-" +
+        String(d.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(d.getDate()).padStart(2, "0");
+      days.push({ date: dayStr, status: currentStatus });
+    }
+    return days;
+  };
+
   if (compact) {
     return (
       <Card className="border border-gray-200 hover:border-gray-300 transition-colors">
@@ -137,10 +180,7 @@ export function ServiceStatusItem({
               <div className="md:col-span-6">
                 <div className="h-8 w-full">
                   <StatusTimeline
-                    data={service.statusHistory.map((h) => ({
-                      date: h.date,
-                      status: h.status,
-                    }))}
+                    data={getDailyStatusHistory(service.statusHistory)}
                   />
                 </div>
               </div>
