@@ -250,7 +250,7 @@ export function SystemHealthCard({ systemHealth }: SystemHealthCardProps) {
         {/* CPU Usage Candlestick Chart */}
         {isClient && cpuCandles.length > 0 && (
           <div className="mt-6">
-            <h4 className="font-medium mb-2">CPU Usage Candlestick</h4>
+            <h4 className="font-medium mb-2">CPU Usage</h4>
             <ApexCharts
               options={{
                 chart: {
@@ -386,7 +386,7 @@ export function SystemHealthCard({ systemHealth }: SystemHealthCardProps) {
         )}
 
         {systemHealth.server_info?.load_average && (
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+          <div className="mt-6 p-4 bg-gray-900/50 dark:bg-gray-800/50 rounded-lg border border-gray-700/30">
             <h4 className="font-medium mb-2">Load Average</h4>
             <div className="flex gap-4 text-sm">
               <span>

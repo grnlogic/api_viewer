@@ -20,9 +20,9 @@ import { StatusTimeline } from "@/components/status-timeline";
 
 interface ServiceStatusItemProps {
   service: {
-    id: string;
+    id: string | number;
     name: string;
-    description: string;
+    description?: string;
     status: "operational" | "degraded" | "outage";
     uptime?: number;
     responseTime?: number;
@@ -133,7 +133,7 @@ export function ServiceStatusItem({
                   {service.name}
                 </h3>
                 <p className="text-xs text-gray-500 truncate">
-                  {service.description}
+                  {service.description || "No description"}
                 </p>
               </div>
             </div>
@@ -171,7 +171,7 @@ export function ServiceStatusItem({
                     {service.name}
                   </h3>
                   <p className="text-xs text-gray-400 truncate">
-                    {service.description}
+                    {service.description || "No description"}
                   </p>
                 </div>
               </div>

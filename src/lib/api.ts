@@ -46,6 +46,9 @@ export async function apiCall(endpoint: string, options: ApiOptions = {}) {
 export const API_ENDPOINTS = {
   SERVICES: "/api/services",
   SERVICE_DETAIL: (id: string) => `/api/services/${id}`,
+  SERVICE_CREATE: "/api/services",
+  SERVICE_UPDATE: (id: string) => `/api/services/${id}`,
+  SERVICE_DELETE: (id: string) => `/api/services/${id}`,
   STATUS_OVERVIEW: "/api/status/overview",
   STATUS_HISTORY: (serviceId: string, days = 90) =>
     `/api/status/history/${serviceId}?days=${days}`,
@@ -56,4 +59,8 @@ export const API_ENDPOINTS = {
   REMOTE_HEALTH_LAPORAN_HARIAN: "/api/remote-health/laporan-harian",
   WEBHOOKS_STATUS: "/api/webhooks/status",
   SSE_STATUS: "/api/sse/status",
+  RESPONSE_TIME_TRENDS: (hours = 24) => `/api/response-time/trends?hours=${hours}`,
+  RESPONSE_TIME_BY_SERVICE: "/api/response-time/by-service",
+  RESPONSE_TIME_SERVICE: (serviceId: string, hours = 24) => 
+    `/api/response-time/service/${serviceId}?hours=${hours}`,
 };

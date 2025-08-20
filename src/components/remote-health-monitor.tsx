@@ -34,7 +34,7 @@ export function RemoteHealthMonitor() {
   const remoteBackends: RemoteBackend[] = [
     {
       name: "Rekap Penjualan",
-      url: "https://rekap-penjualan.api.padudjayaputera.com",
+      url: "https://rekap-penjualan-api.padudjayaputera.com",
       endpoint: API_ENDPOINTS.REMOTE_HEALTH,
       description: "Backend untuk sistem rekap penjualan",
     },
@@ -54,14 +54,51 @@ export function RemoteHealthMonitor() {
       for (const backend of remoteBackends) {
         try {
           const response = await apiCall(backend.endpoint);
+          console.log(`Response for ${backend.name}:`, response);
+
+          // Normalize status response
+          let normalizedStatus = "UNKNOWN";
+          let message = "OK";
+
+          if (response) {
+            // Handle different response formats
+            if (typeof response === "string") {
+              normalizedStatus = response.toUpperCase();
+            } else if (response.status) {
+              normalizedStatus = response.status.toUpperCase();
+              message = response.message || "OK";
+            } else if (response.details && response.details.status) {
+              normalizedStatus = response.details.status.toUpperCase();
+              message = response.details.message || "OK";
+            }
+
+            // Map various status formats to consistent ones
+            if (
+              ["UP", "OK", "OPERATIONAL", "HEALTHY", "RUNNING"].includes(
+                normalizedStatus
+              )
+            ) {
+              normalizedStatus = "UP";
+            } else if (
+              ["DOWN", "ERROR", "FAILED", "OFFLINE"].includes(normalizedStatus)
+            ) {
+              normalizedStatus = "DOWN";
+            } else if (
+              ["DEGRADED", "WARNING", "PARTIAL"].includes(normalizedStatus)
+            ) {
+              normalizedStatus = "DEGRADED";
+            }
+          }
+
           newHealthStatus[backend.name] = {
-            status: response.status || "UNKNOWN",
-            message: response.message || "OK",
+            status: normalizedStatus,
+            message,
             timestamp: new Date().toISOString(),
           };
         } catch (error) {
+          console.error(`Error checking ${backend.name}:`, error);
           newHealthStatus[backend.name] = {
-            status: "ERROR",
+            status: "DOWN",
             message:
               error instanceof Error ? error.message : "Connection failed",
             timestamp: new Date().toISOString(),
@@ -91,11 +128,17 @@ export function RemoteHealthMonitor() {
       case "UP":
       case "OK":
       case "OPERATIONAL":
+      case "HEALTHY":
+      case "RUNNING":
         return "bg-green-500";
       case "DOWN":
       case "ERROR":
+      case "FAILED":
+      case "OFFLINE":
         return "bg-red-500";
       case "DEGRADED":
+      case "WARNING":
+      case "PARTIAL":
         return "bg-yellow-500";
       default:
         return "bg-gray-500";
@@ -107,11 +150,17 @@ export function RemoteHealthMonitor() {
       case "UP":
       case "OK":
       case "OPERATIONAL":
+      case "HEALTHY":
+      case "RUNNING":
         return <CheckCircle className="h-4 w-4 text-green-600" />;
       case "DOWN":
       case "ERROR":
+      case "FAILED":
+      case "OFFLINE":
         return <AlertCircle className="h-4 w-4 text-red-600" />;
       case "DEGRADED":
+      case "WARNING":
+      case "PARTIAL":
         return <Clock className="h-4 w-4 text-yellow-600" />;
       default:
         return <Clock className="h-4 w-4 text-gray-600" />;
@@ -123,11 +172,17 @@ export function RemoteHealthMonitor() {
       case "UP":
       case "OK":
       case "OPERATIONAL":
+      case "HEALTHY":
+      case "RUNNING":
         return "Operational";
       case "DOWN":
       case "ERROR":
+      case "FAILED":
+      case "OFFLINE":
         return "Down";
       case "DEGRADED":
+      case "WARNING":
+      case "PARTIAL":
         return "Degraded";
       default:
         return "Unknown";
@@ -159,7 +214,7 @@ export function RemoteHealthMonitor() {
                     </div>
                   </div>
                 </div>
-                <Badge variant="secondary">Checking...</Badge>
+                <Badge>Checking...</Badge>
               </div>
             ))}
           </div>
@@ -207,10 +262,17 @@ export function RemoteHealthMonitor() {
                 <div className="flex items-center space-x-2">
                   {getStatusIcon(status?.status || "UNKNOWN")}
                   <Badge
-                    variant={
-                      status?.status === "UP" || status?.status === "OK"
-                        ? "default"
-                        : "destructive"
+                    className={
+                      status?.status === "UP" ||
+                      status?.status === "OK" ||
+                      status?.status === "OPERATIONAL"
+                        ? "bg-green-500 text-white"
+                        : status?.status === "DOWN" ||
+                          status?.status === "ERROR"
+                        ? "bg-red-500 text-white"
+                        : status?.status === "DEGRADED"
+                        ? "bg-yellow-500 text-white"
+                        : "bg-gray-500 text-white"
                     }
                   >
                     {getStatusText(status?.status || "UNKNOWN")}

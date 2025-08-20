@@ -32,18 +32,27 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusOverviewCards } from "@/components/status-overview-cards";
 import { SystemHealthCard } from "@/components/system-health-card";
+import { SystemHealthChart } from "@/components/system-health-chart";
 import { RemoteHealthMonitor } from "@/components/remote-health-monitor";
 import { AlertNotifications } from "@/components/alert-notifications";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { QuickStats } from "@/components/quick-stats";
+import { DigitalClock } from "@/components/digital-clock";
+import { ServiceMetricsCard } from "@/components/service-metrics-card";
+import { SystemInfoCard } from "@/components/system-info-card";
+import { ResponseTimeChart } from "@/components/response-time-chart";
+import { ServiceResponseTimeList } from "@/components/service-response-time-list";
+import { ActivityLog } from "@/components/activity-log";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { apiCall, API_ENDPOINTS } from "@/lib/api";
 import { ErrorPage } from "@/components/error-page";
 import { LoadingPage } from "@/components/loading-page";
+import Link from "next/link";
 
 interface Service {
-  id: string;
+  id: string | number;
   name: string;
-  description: string;
+  description?: string;
   status: "operational" | "degraded" | "outage";
   uptime?: number;
   responseTime?: number;
@@ -99,7 +108,8 @@ export function ServiceStatusDashboard() {
   const filteredServices = services.filter((service) => {
     const matchesSearch =
       service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (service.description &&
+        service.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesStatus =
       statusFilter === "all" || service.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -243,6 +253,8 @@ export function ServiceStatusDashboard() {
             return {
               ...service,
               ...metricsData,
+              id: String(service.id), // Ensure id is string
+              description: service.description || "", // Handle missing description
               status: mapStatus(
                 service.status || service.statusText || "unknown"
               ),
@@ -257,6 +269,8 @@ export function ServiceStatusDashboard() {
             );
             return {
               ...service,
+              id: String(service.id), // Ensure id is string
+              description: service.description || "", // Handle missing description
               status: mapStatus(
                 service.status || service.statusText || "unknown"
               ),
@@ -499,10 +513,12 @@ export function ServiceStatusDashboard() {
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
+              <Link href="/admin">
+                <Button variant="outline" size="sm">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Admin
+                </Button>
+              </Link>
               <Button variant="outline" size="sm">
                 <Download className="h-4 w-4 mr-2" />
                 Export
@@ -511,6 +527,11 @@ export function ServiceStatusDashboard() {
                 <Bell className="h-4 w-4 mr-2" />
                 Alerts
               </Button>
+              <Link href="/processes">
+                <Button variant="outline" size="sm" className="ml-2">
+                  Monitoring Proses Server
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -539,29 +560,85 @@ export function ServiceStatusDashboard() {
         {/* Alert Notifications */}
         <AlertNotifications />
 
-        {/* Overview Cards */}
-        <StatusOverviewCards services={services} />
+        {/* Quick Stats Overview */}
+        <QuickStats services={services} />
 
-        {/* System Health */}
-        {systemHealth && <SystemHealthCard systemHealth={systemHealth} />}
+        {/* Main Dashboard Grid - Integrated Information Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Digital Clock */}
+          <DigitalClock />
 
-        {/* Remote Backend Health */}
-        <RemoteHealthMonitor />
+          {/* Service Metrics */}
+          <ServiceMetricsCard services={filteredServices} />
+
+          {/* System Information */}
+          {systemHealth && <SystemInfoCard systemHealth={systemHealth} />}
+
+          {/* Response Time Chart */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <ResponseTimeChart
+              services={filteredServices.map((s) => ({
+                id: s.id.toString(),
+                name: s.name,
+                responseTime: s.responseTime,
+                status: s.status,
+              }))}
+            />
+          </div>
+
+          {/* Service Response Time List */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <ServiceResponseTimeList />
+          </div>
+        </div>
+
+        {/* Remote Backend Health & Activity Section */}
+        <div className="grid gap-4 lg:grid-cols-3">
+          {/* Remote Health Monitor */}
+          <div className="lg:col-span-1">
+            <RemoteHealthMonitor />
+          </div>
+
+          {/* Activity Log */}
+          <div className="lg:col-span-2">
+            <ActivityLog
+              services={filteredServices.map((s) => ({
+                id: s.id.toString(),
+                name: s.name,
+                status: s.status,
+              }))}
+            />
+          </div>
+        </div>
+
+        {/* System Health Chart (Full Width) */}
+        {systemHealth && (
+          <div className="w-full">
+            <SystemHealthChart systemHealth={systemHealth} />
+          </div>
+        )}
 
         {/* Services Section */}
-        <Card className="bg-card/80 backdrop-blur-sm">
+        <Card className="bg-gray-900/20 dark:bg-gray-800/30 border-gray-700/30 backdrop-blur-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  Services Status
-                  <Badge>{services.length} services</Badge>
+                  Response Time Trends
+                  <Badge className="bg-blue-500/20 text-blue-400 border-blue-400/30">
+                    {services.length} services
+                  </Badge>
                 </CardTitle>
                 <CardDescription>
                   Monitor and manage all your services in one place
                 </CardDescription>
               </div>
-              <Button variant="outline" size="sm" onClick={fetchData}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchData}
+                className="border-gray-600/50 hover:bg-gray-800/50"
+              >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Refresh
               </Button>
@@ -575,11 +652,11 @@ export function ServiceStatusDashboard() {
                   placeholder="Search services..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-gray-800/30 border-gray-600/50 focus:border-gray-500"
                 />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-full sm:w-48 bg-gray-800/30 border-gray-600/50">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -595,9 +672,19 @@ export function ServiceStatusDashboard() {
 
           <CardContent>
             <Tabs defaultValue="grid" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="grid">Grid View</TabsTrigger>
-                <TabsTrigger value="list">List View</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-gray-800/30 border border-gray-600/30">
+                <TabsTrigger
+                  value="grid"
+                  className="data-[state=active]:bg-gray-700/50 data-[state=active]:text-white"
+                >
+                  Grid View
+                </TabsTrigger>
+                <TabsTrigger
+                  value="list"
+                  className="data-[state=active]:bg-gray-700/50 data-[state=active]:text-white"
+                >
+                  List View
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="grid" className="space-y-4">
