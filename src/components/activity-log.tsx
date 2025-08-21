@@ -38,8 +38,15 @@ export function ActivityLog({ services }: ActivityLogProps) {
       const activities: ActivityLogEntry[] = [];
       const now = new Date();
 
+      // If no services provided, generate some default activities
+      const servicesToUse = services.length > 0 ? services : [
+        { id: "1", name: "Rekap Penjualan", status: "operational" as const },
+        { id: "2", name: "HRD-SISTEM MONITORING", status: "operational" as const },
+        { id: "3", name: "Laporan Harian", status: "operational" as const },
+      ];
+
       // Add some recent activities
-      services.forEach((service, index) => {
+      servicesToUse.forEach((service, index) => {
         // Recent status check
         activities.push({
           id: `${service.id}-check-${index}`,
