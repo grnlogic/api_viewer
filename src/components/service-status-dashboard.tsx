@@ -564,36 +564,61 @@ export function ServiceStatusDashboard() {
         <QuickStats services={services} />
 
         {/* Main Dashboard Grid - Integrated Information Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
           {/* Digital Clock */}
-          <DigitalClock />
+          <div className="flex flex-col min-h-[280px]">
+            <DigitalClock />
+          </div>
 
           {/* Service Metrics */}
-          <ServiceMetricsCard services={filteredServices} />
+          <div className="flex flex-col min-h-[280px]">
+            <ServiceMetricsCard services={filteredServices} />
+          </div>
 
           {/* System Information */}
-          <SystemInfoCard systemHealth={systemHealth ?? undefined} />
+          <div className="flex flex-col min-h-[280px]">
+            <SystemInfoCard systemHealth={systemHealth ?? undefined} />
+          </div>
 
           {/* Response Time Chart */}
-          <div className="md:col-span-2 lg:col-span-1">
+          <div className="flex flex-col min-h-[280px]">
             <ResponseTimeChart
-              services={filteredServices.length > 0 ? filteredServices.map((s) => ({
-                id: s.id.toString(),
-                name: s.name,
-                responseTime: s.responseTime,
-                status: s.status,
-              })) : [
-                { id: "1", name: "Rekap Penjualan", responseTime: 128, status: "operational" },
-                { id: "2", name: "HRD-SISTEM MONITORING", responseTime: 142, status: "operational" },
-                { id: "3", name: "Laporan Harian", responseTime: 123, status: "operational" }
-              ]}
+              services={
+                filteredServices.length > 0
+                  ? filteredServices.map((s) => ({
+                      id: s.id.toString(),
+                      name: s.name,
+                      responseTime: s.responseTime,
+                      status: s.status,
+                    }))
+                  : [
+                      {
+                        id: "1",
+                        name: "Rekap Penjualan",
+                        responseTime: 128,
+                        status: "operational",
+                      },
+                      {
+                        id: "2",
+                        name: "HRD-SISTEM MONITORING",
+                        responseTime: 142,
+                        status: "operational",
+                      },
+                      {
+                        id: "3",
+                        name: "Laporan Harian",
+                        responseTime: 123,
+                        status: "operational",
+                      },
+                    ]
+              }
             />
           </div>
+        </div>
 
-          {/* Service Response Time List */}
-          <div className="md:col-span-2 lg:col-span-1">
-            <ServiceResponseTimeList />
-          </div>
+        {/* Service Response Time List - Moved to separate row */}
+        <div className="w-full mt-6">
+          <ServiceResponseTimeList />
         </div>
 
         {/* Remote Backend Health & Activity Section */}

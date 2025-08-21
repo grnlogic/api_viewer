@@ -73,9 +73,9 @@ export function SystemInfoCard({ systemHealth }: SystemInfoCardProps) {
         displayName: "Red Hat, Inc. Virtio network device",
         name: "eth0",
         bytesRecv: 1499 * 1024 * 1024, // 1.499 GB
-        bytesSent: 23.88 * 1024 * 1024 // 23.88 GB  
-      }
-    ]
+        bytesSent: 23.88 * 1024 * 1024, // 23.88 GB
+      },
+    ],
   };
 
   return (
@@ -125,7 +125,8 @@ export function SystemInfoCard({ systemHealth }: SystemInfoCardProps) {
           <div className="text-sm">
             <span className="text-muted-foreground">CPU:</span>
             <div className="text-xs text-muted-foreground mt-1 ml-4">
-              {serverInfo?.cpuModel || "Intel(R) Xeon(R) CPU L5-2690 v4 @ 2.60GHz"}
+              {serverInfo?.cpuModel ||
+                "Intel(R) Xeon(R) CPU L5-2690 v4 @ 2.60GHz"}
             </div>
           </div>
         </div>
@@ -170,9 +171,12 @@ export function SystemInfoCard({ systemHealth }: SystemInfoCardProps) {
                 </div>
               </div>
             ))}
-            {(!serverInfo?.networkInfo || serverInfo.networkInfo.length === 0) && (
+            {(!serverInfo?.networkInfo ||
+              serverInfo.networkInfo.length === 0) && (
               <div className="text-xs">
-                <div className="font-medium">Red Hat, Inc. Virtio network device</div>
+                <div className="font-medium">
+                  Red Hat, Inc. Virtio network device
+                </div>
                 <div className="text-muted-foreground">
                   ↓ 1.49 GB | ↑ 23.88 GB
                 </div>

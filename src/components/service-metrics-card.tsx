@@ -65,12 +65,16 @@ export function ServiceMetricsCard({ services }: ServiceMetricsCardProps) {
       const avgUptime =
         uptimes.length > 0
           ? uptimes.reduce((a, b) => a + b, 0) / uptimes.length
-          : total > 0 ? 99.5 : 100.0; // Default high uptime if services exist
-      
+          : total > 0
+          ? 99.5
+          : 100.0; // Default high uptime if services exist
+
       const avgResponseTime =
         responseTimes.length > 0
           ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
-          : total > 0 ? 120 : 0; // Default reasonable response time
+          : total > 0
+          ? 120
+          : 0; // Default reasonable response time
 
       setMetrics({
         totalServices: total > 0 ? total : 3, // Show at least 3 services as default
