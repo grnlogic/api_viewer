@@ -1,0 +1,129 @@
+/* React Grid Layout CSS */
+.react-grid-layout {
+  position: relative;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9IiM0OTRBOEI4IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Im0xIDBoNHYxaC00em0wIDJoNHYxaC00em0wIDJoNHYxaC00eiIvPjwvZz48L3N2Zz4=');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: se-resize;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: rgb(59, 130, 246, 0.2);
+  opacity: 0.8;
+  transition-duration: 100ms;
+  z-index: 2;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  border: 2px dashed rgb(59, 130, 246);
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  opacity: 0.8;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.react-grid-item.disable-pointer-events {
+  pointer-events: none;
+}
+
+/* Dark mode support */
+.dark .react-grid-item {
+  background: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+}
+
+.dark .react-grid-item.react-grid-placeholder {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgb(59, 130, 246);
+}
+
+/* Widget specific styles */
+.react-grid-item .widget-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.react-grid-item .widget-content {
+  padding: 12px;
+  height: calc(100% - 40px);
+  overflow: auto;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .react-grid-item {
+    margin-bottom: 10px;
+  }
+  
+  .react-grid-item > .react-resizable-handle {
+    display: none;
+  }
+}
+
+/* Animation for widget additions */
+@keyframes widgetFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.react-grid-item.widget-new {
+  animation: widgetFadeIn 0.3s ease-out;
+}
+
+/* Hover effects */
+.react-grid-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .react-grid-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

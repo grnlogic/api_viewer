@@ -17,6 +17,7 @@ interface ResponseTimeData {
   time: string;
   responseTime: number;
   hour: number;
+  status?: string;
 }
 
 interface ResponseTimeTrendsData {
@@ -31,7 +32,7 @@ interface ResponseTimeChartProps {
     id: string;
     name: string;
     responseTime?: number;
-    status: "operational" | "degraded" | "outage";
+    status: string; // Accept any status format (UP/DOWN/ERROR or operational/degraded/outage)
   }>;
 }
 
@@ -87,7 +88,7 @@ export function ResponseTimeChart({ services }: ResponseTimeChartProps) {
         // Use services data if available
         if (services && services.length > 0) {
           services.forEach((service) => {
-            if (service.status === "operational" && service.responseTime) {
+            if (service.responseTime) {
               const variation = 0.8 + Math.random() * 0.4;
               avgResponseTime += service.responseTime * variation;
               activeServices++;
@@ -102,7 +103,25 @@ export function ResponseTimeChart({ services }: ResponseTimeChartProps) {
           avgResponseTime = 100 + Math.random() * 100;
         }
 
-        // Add realistic patterns
+        // Add realistic patterns based on services status
+        let statusForHour = "UP";
+        if (services && services.length > 0) {
+          const downServices = services.filter(
+            (s) => s.status === "outage"
+          ).length;
+          const degradedServices = services.filter(
+            (s) => s.status === "degraded"
+          ).length;
+
+          if (downServices > 0) {
+            statusForHour = "DOWN";
+            avgResponseTime = Math.max(avgResponseTime, 5000); // High response time for down services
+          } else if (degradedServices > 0) {
+            statusForHour = "degraded";
+            avgResponseTime *= 1.5; // Increase response time for degraded services
+          }
+        }
+
         if (hour >= 9 && hour <= 17) {
           avgResponseTime *= 1.2; // Higher during business hours
         }
@@ -114,6 +133,7 @@ export function ResponseTimeChart({ services }: ResponseTimeChartProps) {
           time: `${hour.toString().padStart(2, "0")}:00`,
           responseTime: Math.round(avgResponseTime),
           hour: hour,
+          status: statusForHour,
         });
       }
 
@@ -253,15 +273,79 @@ export function ResponseTimeChart({ services }: ResponseTimeChartProps) {
               />
               <YAxis tick={{ fontSize: 10 }} domain={["auto", "auto"]} />
               <Tooltip
-                formatter={(value: any) => [`${value}ms`, "Response Time"]}
+                formatter={(value: any, name: any, props: any) => {
+                  const status = props.payload?.status || "unknown";
+                  return [`${value}ms`, "Response Time"];
+                }}
                 labelFormatter={(label) => `Time: ${label}`}
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    const status = data?.status || "UP";
+                    const bgColor =
+                      status === "DOWN" || status === "ERROR"
+                        ? "#fef2f2"
+                        : "#f8fafc";
+                    const borderColor =
+                      status === "DOWN" || status === "ERROR"
+                        ? "#ef4444"
+                        : "#3b82f6";
+
+                    return (
+                      <div
+                        className="bg-white p-3 border rounded-lg shadow-lg"
+                        style={{
+                          backgroundColor: bgColor,
+                          borderColor: borderColor,
+                          borderWidth: "1px",
+                        }}
+                      >
+                        <p className="font-medium text-sm">Time: {label}</p>
+                        <p className="text-sm">
+                          Response Time: {data.responseTime}ms
+                        </p>
+                        <p
+                          className={`text-sm font-medium ${
+                            status === "DOWN" || status === "ERROR"
+                              ? "text-red-600"
+                              : status === "degraded"
+                              ? "text-yellow-600"
+                              : "text-green-600"
+                          }`}
+                        >
+                          Status: {status}
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
               />
               <Line
                 type="monotone"
                 dataKey="responseTime"
                 stroke="#3b82f6"
                 strokeWidth={2}
-                dot={false}
+                dot={(props: any) => {
+                  const { cx, cy, payload } = props;
+                  const status = payload?.status;
+                  const color =
+                    status === "DOWN" || status === "ERROR"
+                      ? "#ef4444"
+                      : status === "degraded"
+                      ? "#f59e0b"
+                      : "#10b981";
+                  return (
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={3}
+                      fill={color}
+                      stroke={color}
+                      strokeWidth={1}
+                    />
+                  );
+                }}
                 activeDot={{ r: 4, fill: "#3b82f6" }}
               />
             </LineChart>
@@ -274,9 +358,19 @@ export function ResponseTimeChart({ services }: ResponseTimeChartProps) {
             <Clock className="h-3 w-3" />
             <span>Last 24 hours</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span>Avg Response Time</span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>Operational</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <span>Degraded</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+              <span>Down/Error</span>
+            </div>
           </div>
         </div>
       </CardContent>

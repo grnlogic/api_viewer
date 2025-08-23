@@ -9,6 +9,7 @@ import {
   Bell,
   Download,
   AlertCircle,
+  LayoutDashboard,
 } from "lucide-react";
 import { ServiceStatusItem } from "@/components/service-status-item";
 import {
@@ -54,6 +55,7 @@ interface Service {
   name: string;
   description?: string;
   status: "operational" | "degraded" | "outage";
+  backendStatus?: string; // Keep original backend status (UP/DOWN/ERROR)
   uptime?: number;
   responseTime?: number;
   lastIncident: string | null;
@@ -258,6 +260,7 @@ export function ServiceStatusDashboard() {
               status: mapStatus(
                 service.status || service.statusText || "unknown"
               ),
+              backendStatus: service.status || "unknown", // Keep original backend status
               uptime: metricsData.uptime || 0,
               responseTime: metricsData.responseTime || 0,
               statusHistory: mappedHistory,
@@ -274,6 +277,7 @@ export function ServiceStatusDashboard() {
               status: mapStatus(
                 service.status || service.statusText || "unknown"
               ),
+              backendStatus: service.status || "unknown", // Keep original backend status
               uptime: 0,
               responseTime: 0,
               lastIncident: null,
@@ -513,6 +517,12 @@ export function ServiceStatusDashboard() {
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />
+              <Link href="/enhanced-dashboard">
+                <Button variant="outline" size="sm">
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Enhanced Dashboard
+                </Button>
+              </Link>
               <Link href="/admin">
                 <Button variant="outline" size="sm">
                   <Settings className="h-4 w-4 mr-2" />
@@ -589,7 +599,7 @@ export function ServiceStatusDashboard() {
                       id: s.id.toString(),
                       name: s.name,
                       responseTime: s.responseTime,
-                      status: s.status,
+                      status: s.backendStatus || s.status, // Use backend status for chart
                     }))
                   : [
                       {
