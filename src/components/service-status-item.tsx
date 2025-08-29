@@ -187,7 +187,11 @@ export function ServiceStatusItem({
 
               {/* Kolom Kanan - Status Terkini */}
               <div className="lg:col-span-3 flex justify-start lg:justify-end order-2 lg:order-3">
-                <Badge className={`${getStatusColor(service.status)} text-xs sm:text-sm`}>
+                <Badge
+                  className={`${getStatusColor(
+                    service.status
+                  )} text-xs sm:text-sm`}
+                >
                   {getStatusText(service.status)}
                 </Badge>
               </div>

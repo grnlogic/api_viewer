@@ -6,7 +6,17 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Home, Terminal, Activity, Settings, BarChart3, Menu, X, Download, Bell } from "lucide-react";
+import {
+  Home,
+  Terminal,
+  Activity,
+  Settings,
+  BarChart3,
+  Menu,
+  X,
+  Download,
+  Bell,
+} from "lucide-react";
 
 const navigation = [
   {
@@ -48,7 +58,9 @@ export default function Navigation() {
           <div className="flex items-center space-x-2 sm:space-x-4">
             <Link href="/" className="flex items-center space-x-2">
               <Activity className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="font-bold text-sm sm:text-base">Status Monitor</span>
+              <span className="font-bold text-sm sm:text-base">
+                Status Monitor
+              </span>
             </Link>
           </div>
 
@@ -81,19 +93,27 @@ export default function Navigation() {
             {/* Additional buttons - only show on dashboard */}
             {pathname === "/" && (
               <>
-                <Button variant="outline" size="sm" className="hidden sm:flex text-xs">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex text-xs"
+                >
                   <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   <span className="hidden lg:inline">Export</span>
                 </Button>
-                <Button variant="outline" size="sm" className="hidden sm:flex text-xs">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:flex text-xs"
+                >
                   <Bell className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                   <span className="hidden lg:inline">Alerts</span>
                 </Button>
               </>
             )}
-            
+
             <ThemeToggle />
-            
+
             {/* Mobile menu button */}
             <Button
               variant="ghost"
@@ -119,8 +139,8 @@ export default function Navigation() {
                 const isActive = pathname === item.href;
 
                 return (
-                  <Link 
-                    key={item.name} 
+                  <Link
+                    key={item.name}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -138,15 +158,23 @@ export default function Navigation() {
                   </Link>
                 );
               })}
-              
+
               {/* Mobile additional buttons - only show on dashboard */}
               {pathname === "/" && (
                 <>
-                  <Button variant="outline" size="sm" className="w-full justify-start space-x-2 mt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start space-x-2 mt-2"
+                  >
                     <Download className="h-4 w-4" />
                     <span>Export</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="w-full justify-start space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start space-x-2"
+                  >
                     <Bell className="h-4 w-4" />
                     <span>Alerts</span>
                   </Button>

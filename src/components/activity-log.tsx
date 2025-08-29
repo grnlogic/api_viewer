@@ -35,10 +35,10 @@ export default function ActivityLog() {
           timestamp: data.timestamp || Date.now(),
           level: data.level || "INFO",
           message: data.message || JSON.stringify(data),
-          source: data.source || "monitoring"
+          source: data.source || "monitoring",
         };
 
-        setRecentLogs(prev => {
+        setRecentLogs((prev) => {
           const newLogs = [logEntry, ...prev];
           return newLogs.slice(0, 10); // Keep only last 10 entries
         });
@@ -54,10 +54,10 @@ export default function ActivityLog() {
           timestamp: data.timestamp || Date.now(),
           level: data.level || "INFO",
           message: data.message || JSON.stringify(data),
-          source: data.source || "monitoring"
+          source: data.source || "monitoring",
         };
 
-        setRecentLogs(prev => {
+        setRecentLogs((prev) => {
           const newLogs = [logEntry, ...prev];
           return newLogs.slice(0, 10);
         });
@@ -77,20 +77,25 @@ export default function ActivityLog() {
 
   const getLevelColor = (level: string) => {
     switch (level?.toUpperCase()) {
-      case 'ERROR': return 'destructive';
-      case 'WARN': return 'secondary';
-      case 'INFO': return 'default';
-      case 'DEBUG': return 'outline';
-      default: return 'secondary';
+      case "ERROR":
+        return "destructive";
+      case "WARN":
+        return "secondary";
+      case "INFO":
+        return "default";
+      case "DEBUG":
+        return "outline";
+      default:
+        return "secondary";
     }
   };
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-US', {
+    return new Date(timestamp).toLocaleTimeString("en-US", {
       hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
   };
 
@@ -101,7 +106,10 @@ export default function ActivityLog() {
           <div className="flex items-center gap-2">
             <Terminal className="h-4 w-4 sm:h-5 sm:w-5" />
             <CardTitle className="text-sm sm:text-base">Activity Log</CardTitle>
-            <Badge variant={isConnected ? "default" : "secondary"} className="text-xs">
+            <Badge
+              variant={isConnected ? "default" : "secondary"}
+              className="text-xs"
+            >
               {isConnected ? "Live" : "Offline"}
             </Badge>
           </div>
@@ -113,15 +121,17 @@ export default function ActivityLog() {
           </Link>
         </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-2 px-3 sm:px-6">
         {recentLogs.length === 0 ? (
           <div className="text-center py-6 sm:py-8 text-gray-500 text-sm">
-            {isConnected ? "Waiting for activity..." : "Connecting to activity stream..."}
+            {isConnected
+              ? "Waiting for activity..."
+              : "Connecting to activity stream..."}
           </div>
         ) : (
           recentLogs.map((log, index) => (
-            <div 
+            <div
               key={index}
               className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
             >
@@ -129,24 +139,27 @@ export default function ActivityLog() {
                 <span className="text-xs text-gray-500 w-12 sm:w-16 shrink-0">
                   {formatTime(log.timestamp)}
                 </span>
-                
-                <Badge 
+
+                <Badge
                   variant={getLevelColor(log.level)}
                   className="text-xs shrink-0"
                 >
                   {log.level}
                 </Badge>
-                
+
                 <Badge variant="outline" className="text-xs shrink-0 sm:hidden">
                   {log.source}
                 </Badge>
               </div>
-              
+
               <span className="text-xs sm:text-sm flex-1 truncate pl-14 sm:pl-0">
                 {log.message}
               </span>
-              
-              <Badge variant="outline" className="text-xs shrink-0 hidden sm:inline-flex">
+
+              <Badge
+                variant="outline"
+                className="text-xs shrink-0 hidden sm:inline-flex"
+              >
                 {log.source}
               </Badge>
             </div>

@@ -1,12 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Search,
-  Filter,
-  RefreshCw,
-  AlertCircle,
-} from "lucide-react";
+import { Search, Filter, RefreshCw, AlertCircle } from "lucide-react";
 import { ServiceStatusItem } from "@/components/service-status-item";
 import {
   Card,
@@ -634,7 +629,9 @@ export function ServiceStatusDashboard() {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div>
                 <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  <span className="text-lg sm:text-xl">Response Time Trends</span>
+                  <span className="text-lg sm:text-xl">
+                    Response Time Trends
+                  </span>
                   <Badge className="bg-blue-500/20 text-blue-400 border-blue-400/30 text-xs sm:text-sm w-fit">
                     {services.length} services
                   </Badge>

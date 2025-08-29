@@ -247,7 +247,9 @@ export function RemoteHealthMonitor() {
         <CardHeader className="px-3 sm:px-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
             <div>
-              <CardTitle className="text-sm sm:text-base">Remote Backend Health</CardTitle>
+              <CardTitle className="text-sm sm:text-base">
+                Remote Backend Health
+              </CardTitle>
               <CardDescription className="text-xs sm:text-sm">
                 Monitoring external backend services
               </CardDescription>
@@ -261,7 +263,9 @@ export function RemoteHealthMonitor() {
                 className="text-xs sm:text-sm"
               >
                 <RefreshCw
-                  className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 ${loading ? "animate-spin" : ""}`}
+                  className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 ${
+                    loading ? "animate-spin" : ""
+                  }`}
                 />
                 Refresh
               </Button>
@@ -292,13 +296,17 @@ export function RemoteHealthMonitor() {
                 <div className="flex items-center space-x-3">
                   <div className="w-3 h-3 bg-gray-300 rounded-full animate-pulse"></div>
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm sm:text-base truncate">{backend.name}</div>
+                    <div className="font-medium text-sm sm:text-base truncate">
+                      {backend.name}
+                    </div>
                     <div className="text-xs sm:text-sm text-muted-foreground truncate">
                       {backend.description}
                     </div>
                   </div>
                 </div>
-                <Badge className="text-xs self-start sm:self-auto">Checking...</Badge>
+                <Badge className="text-xs self-start sm:self-auto">
+                  Checking...
+                </Badge>
               </div>
             ))}
             {remoteBackends.length === 0 && (
@@ -322,7 +330,9 @@ export function RemoteHealthMonitor() {
       <CardHeader className="px-3 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
           <div>
-            <CardTitle className="text-sm sm:text-base">Remote Backend Health</CardTitle>
+            <CardTitle className="text-sm sm:text-base">
+              Remote Backend Health
+            </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
               Monitoring external backend services
             </CardDescription>
@@ -336,7 +346,9 @@ export function RemoteHealthMonitor() {
               className="text-xs sm:text-sm"
             >
               <RefreshCw
-                className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 ${loading ? "animate-spin" : ""}`}
+                className={`h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 ${
+                  loading ? "animate-spin" : ""
+                }`}
               />
               Refresh
             </Button>
@@ -399,7 +411,9 @@ export function RemoteHealthMonitor() {
                       )}`}
                     ></div>
                     <div className="min-w-0 flex-1">
-                      <div className="font-medium text-sm sm:text-base truncate">{backend.name}</div>
+                      <div className="font-medium text-sm sm:text-base truncate">
+                        {backend.name}
+                      </div>
                       <div className="text-xs sm:text-sm text-muted-foreground truncate">
                         {backend.description}
                       </div>

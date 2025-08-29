@@ -147,7 +147,9 @@ export function QuickStats({ services }: QuickStatsProps) {
                 <div
                   className={`p-2 rounded-lg bg-gray-800/50 dark:bg-gray-700/50 self-start sm:self-auto`}
                 >
-                  <IconComponent className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`} />
+                  <IconComponent
+                    className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`}
+                  />
                 </div>
               </div>
             </CardContent>
