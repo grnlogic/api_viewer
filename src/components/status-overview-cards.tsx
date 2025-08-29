@@ -65,7 +65,7 @@ export function StatusOverviewCards({ services }: StatusOverviewCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
@@ -73,15 +73,15 @@ export function StatusOverviewCards({ services }: StatusOverviewCardsProps) {
             key={card.title}
             className={`${card.bgColor} ${card.borderColor} border-2`}
           >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 sm:px-6 pt-3 sm:pt-6">
+              <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground">
                 {card.title}
               </CardTitle>
-              <Icon className={`h-4 w-4 ${card.color}`} />
+              <Icon className={`h-3 w-3 sm:h-4 sm:w-4 ${card.color}`} />
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
               <div className="flex items-center justify-between">
-                <div className={`text-2xl font-bold ${card.color}`}>
+                <div className={`text-lg sm:text-2xl font-bold ${card.color}`}>
                   {typeof card.value === "number" && card.total
                     ? `${card.value}`
                     : card.value}
@@ -92,9 +92,9 @@ export function StatusOverviewCards({ services }: StatusOverviewCardsProps) {
               </div>
               {card.total && (
                 <div className="mt-2">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 sm:h-2">
                     <div
-                      className={`h-2 rounded-full transition-all duration-300 ${
+                      className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${
                         card.title === "Operational"
                           ? "bg-green-500"
                           : card.title === "Degraded"

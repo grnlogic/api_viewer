@@ -1,59 +1,28 @@
 import { NextResponse } from "next/server";
+import { seedDefaultBackends } from "@/lib/backend-api";
 
 export async function POST() {
   try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://45.158.126.252:8082";
+    // Use backend API to seed default data
+    const result = await seedDefaultBackends();
     
-    // Data backend yang akan ditambahkan
-    const remoteBackends = [
-      {
-        name: "Rekap Penjualan",
-        url: "https://rekap-penjualan-api.padudjayaputera.com",
-        healthEndpoint: "/api/health/status",
-        description: "Backend untuk sistem rekap penjualan",
-        enabled: true,
-      },
-      {
-        name: "Laporan Harian", 
-        url: "https://laporan-harian.padudjayaputera.com",
-        healthEndpoint: "/api/health/status",
-        description: "Backend untuk sistem laporan harian",
-        enabled: true,
-      },
-    ];
-
-    const results = [];
-    
-    for (const backend of remoteBackends) {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/remote-health/backends`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(backend),
-        });
-
-        if (response.ok) {
-          const savedBackend = await response.json();
-          results.push({ success: true, backend: savedBackend });
-        } else {
-          // Mungkin sudah ada, skip error
-          results.push({ success: false, error: `${response.status} ${response.statusText}`, backend: backend.name });
-        }
-      } catch (error) {
-        results.push({ success: false, error: error instanceof Error ? error.message : "Unknown error", backend: backend.name });
-      }
-    }
-
     return NextResponse.json({
-      message: "Initialization completed",
-      results,
+      message: "Backend seeding completed",
+      result,
     });
   } catch (error) {
-    console.error("Error initializing remote backends:", error);
+    console.error("Error seeding remote backends:", error);
+    
+    // Check if it's already seeded error
+    if (error instanceof Error && error.message.includes("Failed to seed backends: 400")) {
+      return NextResponse.json({
+        message: "Backends already initialized",
+        status: "ALREADY_SEEDED"
+      });
+    }
+    
     return NextResponse.json(
-      { error: "Failed to initialize remote backends" },
+      { error: "Failed to seed remote backends", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
   }

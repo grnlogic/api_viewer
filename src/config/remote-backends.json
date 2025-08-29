@@ -1,0 +1,18 @@
+{
+  "backends": [
+    {
+      "name": "Rekap Penjualan",
+      "url": "https://rekap-penjualan-api.padudjayaputera.com",
+      "healthEndpoint": "/api/health/status",
+      "description": "Backend untuk sistem rekap penjualan",
+      "enabled": true
+    },
+    {
+      "name": "Laporan Harian",
+      "url": "https://laporan-harian.padudjayaputera.com",
+      "healthEndpoint": "/api/health/status",
+      "description": "Backend untuk sistem laporan harian",
+      "enabled": true
+    }
+  ]
+}

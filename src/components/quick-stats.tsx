@@ -123,7 +123,7 @@ export function QuickStats({ services }: QuickStatsProps) {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, index) => {
         const IconComponent = stat.icon;
         return (
@@ -131,13 +131,13 @@ export function QuickStats({ services }: QuickStatsProps) {
             key={index}
             className={`border border-gray-700/30 ${stat.bgColor} bg-gray-900/20 dark:bg-gray-800/30`}
           >
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground font-medium">
+                  <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                     {stat.label}
                   </p>
-                  <p className={`text-2xl font-bold ${stat.color}`}>
+                  <p className={`text-lg sm:text-2xl font-bold ${stat.color}`}>
                     {stat.value}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -145,9 +145,9 @@ export function QuickStats({ services }: QuickStatsProps) {
                   </p>
                 </div>
                 <div
-                  className={`p-2 rounded-lg bg-gray-800/50 dark:bg-gray-700/50`}
+                  className={`p-2 rounded-lg bg-gray-800/50 dark:bg-gray-700/50 self-start sm:self-auto`}
                 >
-                  <IconComponent className={`h-6 w-6 ${stat.color}`} />
+                  <IconComponent className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`} />
                 </div>
               </div>
             </CardContent>

@@ -126,7 +126,7 @@ export function ServiceStatusItem({
     return (
       <Card className="border border-gray-200 hover:border-gray-300 transition-colors">
         <div className="p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-sm truncate">
@@ -137,7 +137,7 @@ export function ServiceStatusItem({
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between sm:justify-end gap-3">
               <div className="text-xs text-muted-foreground">
                 {service.uptime ? service.uptime.toFixed(1) : "0.0"}% uptime
               </div>
@@ -155,30 +155,30 @@ export function ServiceStatusItem({
     <TooltipProvider>
       <Card className="border border-gray-700 bg-gray-900 hover:border-gray-600 transition-colors">
         <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-          <div className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          <div className="p-3 sm:p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-start lg:items-center">
               {/* Kolom Kiri - Identitas Layanan */}
-              <div className="md:col-span-3 flex items-center gap-3">
-                <CollapsibleTrigger className="flex items-center gap-2 hover:bg-gray-50 p-1 rounded transition-colors">
+              <div className="lg:col-span-3 flex items-center gap-2 sm:gap-3">
+                <CollapsibleTrigger className="flex items-center gap-1 sm:gap-2 hover:bg-gray-50/5 p-1 rounded transition-colors">
                   {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-gray-400" />
+                    <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                    <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
                   )}
                 </CollapsibleTrigger>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm truncate text-white">
+                  <h3 className="font-semibold text-sm sm:text-base truncate text-white">
                     {service.name}
                   </h3>
-                  <p className="text-xs text-gray-400 truncate">
+                  <p className="text-xs sm:text-sm text-gray-400 truncate">
                     {service.description || "No description"}
                   </p>
                 </div>
               </div>
 
               {/* Kolom Tengah - Status Timeline */}
-              <div className="md:col-span-6">
-                <div className="h-8 w-full">
+              <div className="lg:col-span-6 order-3 lg:order-2">
+                <div className="h-6 sm:h-8 w-full">
                   <StatusTimeline
                     data={getDailyStatusHistory(service.statusHistory)}
                   />
@@ -186,33 +186,33 @@ export function ServiceStatusItem({
               </div>
 
               {/* Kolom Kanan - Status Terkini */}
-              <div className="md:col-span-3 flex justify-end">
-                <Badge className={getStatusColor(service.status)}>
+              <div className="lg:col-span-3 flex justify-start lg:justify-end order-2 lg:order-3">
+                <Badge className={`${getStatusColor(service.status)} text-xs sm:text-sm`}>
                   {getStatusText(service.status)}
                 </Badge>
               </div>
             </div>
 
             {/* Expandable Details */}
-            <CollapsibleContent className="mt-4">
-              <div className="border-t pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CollapsibleContent className="mt-3 sm:mt-4">
+              <div className="border-t border-gray-700 pt-3 sm:pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {/* Metrics */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-sm flex items-center gap-2">
-                      <Activity className="h-4 w-4" />
+                  <div className="space-y-2 sm:space-y-3">
+                    <h4 className="font-medium text-sm flex items-center gap-2 text-white">
+                      <Activity className="h-3 w-3 sm:h-4 sm:w-4" />
                       Performance Metrics
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Uptime (90 days)</span>
-                        <span className="font-medium">
+                        <span className="text-gray-400">Uptime (90 days)</span>
+                        <span className="font-medium text-white">
                           {service.uptime ? service.uptime.toFixed(2) : "0.00"}%
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Avg Response Time</span>
-                        <span className="font-medium">
+                        <span className="text-gray-400">Avg Response Time</span>
+                        <span className="font-medium text-white">
                           {service.responseTime || 0}ms
                         </span>
                       </div>
@@ -220,15 +220,15 @@ export function ServiceStatusItem({
                   </div>
 
                   {/* Last Incident */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-sm flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4" />
+                  <div className="space-y-2 sm:space-y-3">
+                    <h4 className="font-medium text-sm flex items-center gap-2 text-white">
+                      <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4" />
                       Last Incident
                     </h4>
                     <div className="text-sm">
                       {service.lastIncident ? (
                         <div className="space-y-1">
-                          <div className="text-gray-600">
+                          <div className="text-gray-400">
                             {formatDate(service.lastIncident)}
                           </div>
                           <div className="text-xs text-gray-500">
@@ -236,21 +236,21 @@ export function ServiceStatusItem({
                           </div>
                         </div>
                       ) : (
-                        <div className="text-gray-500">No recent incidents</div>
+                        <div className="text-gray-400">No recent incidents</div>
                       )}
                     </div>
                   </div>
 
                   {/* Status History Summary */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-sm flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
+                  <div className="space-y-2 sm:space-y-3 sm:col-span-2 lg:col-span-1">
+                    <h4 className="font-medium text-sm flex items-center gap-2 text-white">
+                      <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
                       Status Summary
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Operational Days</span>
-                        <span className="font-medium text-green-600">
+                        <span className="text-gray-400">Operational Days</span>
+                        <span className="font-medium text-green-400">
                           {
                             service.statusHistory.filter(
                               (h) => h.status === "operational"
@@ -259,8 +259,8 @@ export function ServiceStatusItem({
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Degraded Days</span>
-                        <span className="font-medium text-yellow-600">
+                        <span className="text-gray-400">Degraded Days</span>
+                        <span className="font-medium text-yellow-400">
                           {
                             service.statusHistory.filter(
                               (h) => h.status === "degraded"
@@ -269,8 +269,8 @@ export function ServiceStatusItem({
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Outage Days</span>
-                        <span className="font-medium text-red-600">
+                        <span className="text-gray-400">Outage Days</span>
+                        <span className="font-medium text-red-400">
                           {
                             service.statusHistory.filter(
                               (h) => h.status === "outage"

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const encoder = new TextEncoder();
   const backendUrl =
-    process.env.NEXT_PUBLIC_BACKEND_URL || "http://45.158.126.252:8082";
+    process.env.NEXT_PUBLIC_BACKEND_URL || "https://status-page-api.padudjayaputera.com";
 
   const stream = new ReadableStream({
     async start(controller) {

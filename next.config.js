@@ -45,7 +45,7 @@ const nextConfig = {
     return [
       {
         source: "/backend/:path*",
-        destination: "http://45.158.126.252:8082/:path*",
+        destination: "https://status-page-api.padudjayaputera.com/:path*",
       },
     ];
   },

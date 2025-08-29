@@ -1,6 +1,6 @@
 // API configuration and helper functions
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://45.158.126.252:8082";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "https://status-page-api.padudjayaputera.com";
 
 interface ApiOptions {
   method?: "GET" | "POST" | "PUT" | "DELETE";

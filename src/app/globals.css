@@ -207,3 +207,56 @@
 .animate-failed-fetch {
   animation: failedFetch 2s ease-in-out infinite;
 }
+
+/* Mobile responsive utilities */
+@layer utilities {
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .container-mobile {
+    @apply container mx-auto px-3 sm:px-4 lg:px-6;
+  }
+  
+  .text-mobile-responsive {
+    @apply text-sm sm:text-base;
+  }
+  
+  .button-mobile {
+    @apply text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2;
+  }
+  
+  .card-mobile {
+    @apply p-3 sm:p-4 lg:p-6;
+  }
+  
+  .grid-mobile-responsive {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+}
+
+/* Touch-friendly styles for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:bg-gray-50:hover {
+    background-color: transparent;
+  }
+  
+  button, .button, [role="button"] {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  input, textarea, select {
+    @apply min-h-[44px];
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
