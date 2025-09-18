@@ -99,8 +99,8 @@ export function LoadingPage({
             <div className="text-center text-sm text-muted-foreground space-y-2">
               <p>Mohon tunggu sebentar sementara sistem memuat data terbaru</p>
               <div className="flex items-center justify-center gap-4">
-                <span>Email: support@padudjaya.com</span>
-                <span>Telp: +62 21 1234 5678</span>
+                <span>Email: geranuser@gmail.com</span>
+                <span>Telp: +62 895352281010</span>
               </div>
             </div>
           </CardContent>

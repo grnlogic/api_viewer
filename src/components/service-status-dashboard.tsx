@@ -95,6 +95,35 @@ export function ServiceStatusDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
+  // Mapping status dari backend ke frontend dengan debug logging
+  const mapStatus = (
+    status: string,
+    responseTime?: number
+  ): "operational" | "degraded" | "outage" => {
+    console.log(`🔍 Mapping status: "${status}" with responseTime: ${responseTime}`);
+
+    const result = (() => {
+      switch (status?.toUpperCase()) {
+        case "UP":
+          // Jika response time > 1000ms, anggap degraded meskipun UP
+          if (responseTime && responseTime > 1000) {
+            return "degraded";
+          }
+          return "operational";
+        case "DEGRADED":
+          return "degraded";
+        case "DOWN":
+        case "ERROR":
+          return "outage";
+        default:
+          return "outage";
+      }
+    })();
+
+    console.log(`✅ Status "${status}" mapped to "${result}"`);
+    return result;
+  };
+
   // Add filtering logic
   const filteredServices = services.filter((service) => {
     const matchesSearch =
@@ -198,25 +227,6 @@ export function ServiceStatusDashboard() {
       };
       console.log("Mapped systemHealth for card:", mappedSystemHealth);
       setSystemHealth(mappedSystemHealth);
-
-      // Mapping status dari backend ke frontend dengan additional logic
-      const mapStatus = (status: string, responseTime?: number) => {
-        switch (status?.toUpperCase()) {
-          case "UP":
-            // Jika response time > 1000ms, anggap degraded meskipun UP
-            if (responseTime && responseTime > 1000) {
-              return "degraded";
-            }
-            return "operational";
-          case "DEGRADED":
-            return "degraded";
-          case "DOWN":
-          case "ERROR":
-            return "outage";
-          default:
-            return "outage";
-        }
-      };
 
       // Fetch history and metrics for each service
       const servicesWithHistory = await Promise.all(
@@ -409,18 +419,40 @@ export function ServiceStatusDashboard() {
         if (dataStr.startsWith("data: ")) {
           dataStr = dataStr.slice(6);
         }
-        const data = JSON.parse(dataStr);
-        if (data.type === "status_update") {
-          setServices((prev) =>
-            prev.map((service) =>
-              service.id === data.service_id
-                ? { ...service, status: data.status }
-                : service
-            )
+        const backendServices = JSON.parse(dataStr);
+
+        // Jika data adalah array services dari backend
+        if (Array.isArray(backendServices)) {
+          setServices((prevServices) =>
+            prevServices.map((service) => {
+              const backendService = backendServices.find(
+                (bs: any) => bs.id === Number(service.id)
+              );
+
+              if (backendService) {
+                const mappedStatus = mapStatus(
+                  backendService.status,
+                  backendService.lastResponseTimeMs
+                );
+
+                console.log(
+                  `SSE Update - Service: ${service.name}, Backend Status: ${backendService.status}, Mapped Status: ${mappedStatus}`
+                );
+
+                return {
+                  ...service,
+                  status: mappedStatus,
+                  backendStatus: backendService.status,
+                  responseTime: backendService.lastResponseTimeMs || service.responseTime,
+                };
+              }
+
+              return service;
+            })
           );
         }
       } catch (error) {
-        console.error("Error parsing SSE data:", error);
+        console.error("Error parsing SSE data:", error, "Raw data:", event.data);
       }
     };
 
